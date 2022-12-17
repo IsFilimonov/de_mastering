@@ -2,7 +2,7 @@
 version: '2'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.2.2
+    image: confluentinc/cp-zookeeper:7.3.0
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -12,7 +12,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   broker:
-    image: confluentinc/cp-kafka:7.2.2
+    image: confluentinc/cp-kafka:7.3.0
     hostname: broker
     container_name: broker
     depends_on:
@@ -34,7 +34,7 @@ services:
       KAFKA_JMX_HOSTNAME: localhost
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.2.2
+    image: confluentinc/cp-schema-registry:7.3.0
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -47,7 +47,7 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
   connect:
-    image: cnfldemos/kafka-connect-datagen:0.5.3-7.1.0
+    image: cnfldemos/kafka-connect-datagen:0.6.0-7.3.0
     hostname: connect
     container_name: connect
     depends_on:
@@ -70,30 +70,27 @@ services:
       CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
-      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
-    command: 
-      - bash 
-      - -c 
-      - |
-        echo "Installing connector plugins"
-        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
-        confluent-hub install --no-prompt jcustenborder/kafka-connect-spooldir:latest
-        confluent-hub install --no-prompt streamthoughts/kafka-connect-file-pulse:latest
-        #
-        # -----------
-        # Launch the Kafka Connect worker
-        /etc/confluent/docker/run &
-        #
-        # Don't exit
-        sleep infinity  
-    volumes:
+    command: 	
+      - bash 	
+      - -c 	
+      - |	
+        echo "Installing connector plugins"	
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest	
+        confluent-hub install --no-prompt jcustenborder/kafka-connect-spooldir:latest	
+        confluent-hub install --no-prompt streamthoughts/kafka-connect-file-pulse:latest	
+        #	
+        # -----------	
+        # Launch the Kafka Connect worker	
+        /etc/confluent/docker/run &	
+        #	
+        # Don't exit	
+        sleep infinity
+    volumes:	
       - $PWD/data:/data
 
-
   ksqldb-server:
-    image: confluentinc/cp-ksqldb-server:7.2.2
+    image: confluentinc/cp-ksqldb-server:7.3.0
     hostname: ksqldb-server
     container_name: ksqldb-server
     depends_on:
@@ -114,7 +111,7 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
 
   ksqldb-cli:
-    image: confluentinc/cp-ksqldb-cli:7.2.2
+    image: confluentinc/cp-ksqldb-cli:7.3.0
     container_name: ksqldb-cli
     depends_on:
       - broker
@@ -124,7 +121,7 @@ services:
     tty: true
 
   # ksql-datagen:
-  #   image: confluentinc/ksqldb-examples:7.2.2
+  #   image: confluentinc/ksqldb-examples:7.3.0
   #   hostname: ksql-datagen
   #   container_name: ksql-datagen
   #   depends_on:
@@ -146,7 +143,7 @@ services:
   #     STREAMS_SCHEMA_REGISTRY_PORT: 8081
 
   rest-proxy:
-    image: confluentinc/cp-kafka-rest:7.2.2
+    image: confluentinc/cp-kafka-rest:7.3.0
     depends_on:
       - broker
       - schema-registry
